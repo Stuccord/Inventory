@@ -93,7 +93,7 @@ export default function SuppliersView() {
           {canManage && (
             <button
               onClick={() => setShowForm(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+              className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition"
             >
               <Plus size={18} />
               Add Supplier
@@ -106,8 +106,8 @@ export default function SuppliersView() {
             <div key={supplier.id} className="p-6 hover:bg-gray-50 transition">
               <div className="flex items-start justify-between">
                 <div className="flex gap-4">
-                  <div className="p-3 bg-purple-100 rounded-lg">
-                    <Building2 size={24} className="text-purple-600" />
+                  <div className="p-3 bg-orange-100 rounded-lg">
+                    <Building2 size={24} className="text-orange-600" />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-lg text-gray-900">{supplier.name}</h3>
@@ -196,7 +196,7 @@ export default function SuppliersView() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
                 />
               </div>
 
@@ -208,7 +208,7 @@ export default function SuppliersView() {
                   type="text"
                   value={formData.contact_person}
                   onChange={(e) => setFormData({ ...formData, contact_person: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
                 />
               </div>
 
@@ -219,7 +219,7 @@ export default function SuppliersView() {
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
                 <div>
@@ -228,7 +228,7 @@ export default function SuppliersView() {
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
               </div>
@@ -239,7 +239,7 @@ export default function SuppliersView() {
                   type="text"
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
                 />
               </div>
 
@@ -248,7 +248,7 @@ export default function SuppliersView() {
                 <textarea
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
                   rows={3}
                 />
               </div>
@@ -267,7 +267,7 @@ export default function SuppliersView() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                  className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
                 >
                   {editingSupplier ? 'Update' : 'Add'} Supplier
                 </button>

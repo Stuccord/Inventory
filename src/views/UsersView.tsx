@@ -197,7 +197,7 @@ export default function UsersView() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`px-2 py-1 text-xs rounded-full uppercase font-medium ${
-                    user.role === 'admin' ? 'bg-purple-100 text-purple-800' :
+                    user.role === 'admin' ? 'bg-red-100 text-red-800' :
                     user.role === 'manager' ? 'bg-blue-100 text-blue-800' :
                     user.role === 'auditor' ? 'bg-orange-100 text-orange-800' :
                     'bg-green-100 text-green-800'
