@@ -32,28 +32,38 @@ export default function Dashboard() {
   }, []);
 
   const loadDashboardData = async () => {
-    const today = new Date().toISOString().split('T')[0];
+    try {
+      const today = new Date().toISOString().split('T')[0];
 
-    const [productsRes, ordersRes, todayOrdersRes] = await Promise.all([
-      supabase.from('products').select('*, categories(*), suppliers(*)').eq('is_active', true),
-      supabase.from('orders').select('*').eq('order_status', 'completed'),
-      supabase.from('orders').select('*').eq('order_date', today).eq('order_status', 'completed')
-    ]);
+      const [productsRes, ordersRes, todayOrdersRes] = await Promise.all([
+        supabase.from('products').select('*, categories(*), suppliers(*)').eq('is_active', true),
+        supabase.from('orders').select('*').eq('order_status', 'completed'),
+        supabase.from('orders').select('*').eq('order_date', today).eq('order_status', 'completed')
+      ]);
 
-    if (productsRes.data) {
-      setProducts(productsRes.data as any[]);
-      const totalStock = productsRes.data.reduce((sum, p: any) => sum + p.current_stock, 0);
-      setStats(prev => ({ ...prev, totalProducts: productsRes.data.length, totalStock }));
-    }
+      if (productsRes.error) {
+        console.error('Error loading products:', productsRes.error);
+      } else if (productsRes.data) {
+        setProducts(productsRes.data as any[]);
+        const totalStock = productsRes.data.reduce((sum, p: any) => sum + p.current_stock, 0);
+        setStats(prev => ({ ...prev, totalProducts: productsRes.data.length, totalStock }));
+      }
 
-    if (ordersRes.data) {
-      setOrders(ordersRes.data);
-      const revenue = ordersRes.data.reduce((sum, o) => sum + Number(o.total_amount), 0);
-      setStats(prev => ({ ...prev, revenue }));
-    }
+      if (ordersRes.error) {
+        console.error('Error loading orders:', ordersRes.error);
+      } else if (ordersRes.data) {
+        setOrders(ordersRes.data);
+        const revenue = ordersRes.data.reduce((sum, o) => sum + Number(o.total_amount), 0);
+        setStats(prev => ({ ...prev, revenue }));
+      }
 
-    if (todayOrdersRes.data) {
-      setStats(prev => ({ ...prev, ordersToday: todayOrdersRes.data.length }));
+      if (todayOrdersRes.error) {
+        console.error('Error loading today orders:', todayOrdersRes.error);
+      } else if (todayOrdersRes.data) {
+        setStats(prev => ({ ...prev, ordersToday: todayOrdersRes.data.length }));
+      }
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
     }
   };
 
