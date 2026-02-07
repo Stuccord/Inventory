@@ -2,28 +2,37 @@
 
 A complete, production-ready inventory management system built with React, TypeScript, Supabase, and Tailwind CSS.
 
-## 🚀 Quick Start
+## 🚀 Getting Started
+
+### 👉 **[START_HERE.md](./START_HERE.md)** ← Read this first!
+
+Complete setup checklist and guide to get you running in minutes.
+
+### ⚡ **[QUICK_START.md](./QUICK_START.md)**
+
+5-minute quick reference for daily operations.
+
+---
+
+## 🚀 Detailed Guides
 
 ### 1. Sign In as Admin
-See **[ADMIN_SETUP.md](./ADMIN_SETUP.md)** for detailed instructions on:
-- Creating your first admin account
-- Signing in
-- Troubleshooting login issues
+**[CREATE_ADMIN.md](./CREATE_ADMIN.md)** - Create your first admin account
+- Step-by-step with screenshots
+- SQL script included
+- Troubleshooting tips
 
-### 2. Deploy to Vercel
-See **[VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)** for:
-- Step-by-step deployment guide
-- Environment variable setup
-- Custom domain configuration
-- **Deploy in under 10 minutes!**
+### 2. Deploy to Vercel (Go Live!)
+**[VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)** - Deploy in 10 minutes
+- Free hosting setup
+- Environment variables
+- Custom domain support
 
-### 3. Learn Daily Operations
-See **[BUSINESS_GUIDE.md](./BUSINESS_GUIDE.md)** for:
-- How to add products
-- Monitor stock in/out
-- Create staff accounts
-- Process sales and returns
-- Print receipts
+### 3. Daily Operations
+**[BUSINESS_GUIDE.md](./BUSINESS_GUIDE.md)** - How to use the system
+- Create orders and print receipts
+- Manage inventory
+- Team workflows
 
 ---
 
