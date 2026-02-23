@@ -61,40 +61,36 @@ export default function UsersView() {
         new_values: safeFormData,
       });
     } else {
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-      });
+      const { data: { session } } = await supabase.auth.getSession();
 
-      if (authError || !authData.user) {
-        alert('Error creating user: ' + authError?.message);
+      if (!session) {
+        alert('Session expired. Please log in again.');
         return;
       }
 
-      const { error: profileError } = await supabase
-        .from('user_profiles')
-        .insert({
-          id: authData.user.id,
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-user`;
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           email: formData.email,
+          password: formData.password,
           full_name: formData.full_name,
           role: formData.role,
           phone: formData.phone,
-        });
+        }),
+      });
 
-      if (profileError) {
-        alert('Error creating user profile');
+      const result = await response.json();
+
+      if (!response.ok || result.error) {
+        alert('Error creating user: ' + (result.error || 'Unknown error'));
         return;
       }
-
-      const { password, ...safeNewData } = formData;
-
-      await supabase.from('audit_logs').insert({
-        user_id: currentUser?.id,
-        action: 'create',
-        entity_type: 'user_profile',
-        entity_id: authData.user.id,
-        new_values: safeNewData,
-      });
     }
 
     setShowForm(false);
