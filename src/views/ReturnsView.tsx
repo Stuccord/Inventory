@@ -33,10 +33,10 @@ export default function ReturnsView({ onUpdate }: { onUpdate: () => void }) {
   const loadReturns = async () => {
     const { data } = await supabase
       .from('returns')
-      .select('*')
+      .select('*, orders(customer_name, order_number)')
       .order('created_at', { ascending: false });
 
-    if (data) setReturns(data);
+    if (data) setReturns(data as any);
   };
 
   const loadOrders = async () => {
@@ -199,9 +199,14 @@ export default function ReturnsView({ onUpdate }: { onUpdate: () => void }) {
     setSelectedOrderItems([]);
   };
 
-  const filteredReturns = returns.filter(ret =>
-    ret.return_number.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredReturns = returns.filter(ret => {
+    const searchLower = searchTerm.toLowerCase();
+    const customerName = (ret as any).orders?.customer_name || '';
+    return (
+      ret.return_number.toLowerCase().includes(searchLower) ||
+      customerName.toLowerCase().includes(searchLower)
+    );
+  });
 
   return (
     <div className="p-4 md:p-6">
@@ -223,7 +228,7 @@ export default function ReturnsView({ onUpdate }: { onUpdate: () => void }) {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
           <input
             type="text"
-            placeholder="Search by return number..."
+            placeholder="Search by return number or customer name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -261,7 +266,7 @@ export default function ReturnsView({ onUpdate }: { onUpdate: () => void }) {
                     {ret.return_reason}
                   </td>
                   <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    ${Number(ret.refund_amount).toFixed(2)}
+                    ¢{Number(ret.refund_amount).toFixed(2)}
                   </td>
                   <td className="px-3 md:px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 py-1 text-xs rounded-full ${
@@ -328,7 +333,7 @@ export default function ReturnsView({ onUpdate }: { onUpdate: () => void }) {
                     <option value="">Choose an order...</option>
                     {orders.map((order) => (
                       <option key={order.id} value={order.id}>
-                        {order.order_number} - {order.customer_name} (${Number(order.total_amount).toFixed(2)})
+                        {order.order_number} - {order.customer_name} (¢{Number(order.total_amount).toFixed(2)})
                       </option>
                     ))}
                   </select>
@@ -418,7 +423,7 @@ export default function ReturnsView({ onUpdate }: { onUpdate: () => void }) {
                           </div>
                           <div className="col-span-2 text-right">
                             <p className="text-sm font-medium text-gray-900">
-                              ${(item.unit_price * item.quantity).toFixed(2)}
+                              ¢{(item.unit_price * item.quantity).toFixed(2)}
                             </p>
                           </div>
                         </div>
@@ -430,7 +435,7 @@ export default function ReturnsView({ onUpdate }: { onUpdate: () => void }) {
                     <div className="bg-gray-50 rounded-lg p-4 w-64">
                       <div className="flex justify-between text-lg font-bold">
                         <span>Total Refund:</span>
-                        <span>${calculateRefund().toFixed(2)}</span>
+                        <span>¢{calculateRefund().toFixed(2)}</span>
                       </div>
                     </div>
                   </div>

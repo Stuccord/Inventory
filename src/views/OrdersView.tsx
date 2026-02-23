@@ -253,7 +253,7 @@ export default function OrdersView({ onUpdate }: { onUpdate: () => void }) {
                     <div className="text-gray-500 text-xs hidden sm:block">{order.customer_phone}</div>
                   </td>
                   <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    ${Number(order.total_amount).toFixed(2)}
+                    ¢{Number(order.total_amount).toFixed(2)}
                   </td>
                   <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden md:table-cell">
                     <span className="capitalize">{order.payment_method}</span>
@@ -395,7 +395,7 @@ export default function OrdersView({ onUpdate }: { onUpdate: () => void }) {
                         </label>
                         <input
                           type="text"
-                          value={`$${(item.unit_price * item.quantity).toFixed(2)}`}
+                          value={`¢${(item.unit_price * item.quantity).toFixed(2)}`}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50"
                           disabled
                         />
@@ -419,15 +419,15 @@ export default function OrdersView({ onUpdate }: { onUpdate: () => void }) {
                   <div className="w-64">
                     <div className="flex justify-between text-sm mb-2">
                       <span className="text-gray-600">Subtotal:</span>
-                      <span className="font-medium">${subtotal.toFixed(2)}</span>
+                      <span className="font-medium">¢{subtotal.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-sm mb-2">
                       <span className="text-gray-600">Tax (10%):</span>
-                      <span className="font-medium">${tax.toFixed(2)}</span>
+                      <span className="font-medium">¢{tax.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-lg font-bold border-t pt-2">
                       <span>Total:</span>
-                      <span>${total.toFixed(2)}</span>
+                      <span>¢{total.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
@@ -559,8 +559,8 @@ function InvoiceModal({ order, onClose }: { order: Order; onClose: () => void })
                   <tr key={item.id}>
                     <td className="px-2 md:px-4 py-3 text-xs md:text-sm text-gray-900">{item.products?.name}</td>
                     <td className="px-2 md:px-4 py-3 text-xs md:text-sm text-gray-600 text-center">{item.quantity}</td>
-                    <td className="px-2 md:px-4 py-3 text-xs md:text-sm text-gray-600 text-right">${Number(item.unit_price).toFixed(2)}</td>
-                    <td className="px-2 md:px-4 py-3 text-xs md:text-sm font-medium text-gray-900 text-right">${Number(item.total_price).toFixed(2)}</td>
+                    <td className="px-2 md:px-4 py-3 text-xs md:text-sm text-gray-600 text-right">¢{Number(item.unit_price).toFixed(2)}</td>
+                    <td className="px-2 md:px-4 py-3 text-xs md:text-sm font-medium text-gray-900 text-right">¢{Number(item.total_price).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -571,15 +571,15 @@ function InvoiceModal({ order, onClose }: { order: Order; onClose: () => void })
             <div className="w-64">
               <div className="flex justify-between mb-2">
                 <span className="text-gray-600">Subtotal:</span>
-                <span className="font-medium">${Number(order.subtotal).toFixed(2)}</span>
+                <span className="font-medium">¢{Number(order.subtotal).toFixed(2)}</span>
               </div>
               <div className="flex justify-between mb-2">
                 <span className="text-gray-600">Tax:</span>
-                <span className="font-medium">${Number(order.tax).toFixed(2)}</span>
+                <span className="font-medium">¢{Number(order.tax).toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-lg font-bold border-t pt-2">
                 <span>Total:</span>
-                <span>${Number(order.total_amount).toFixed(2)}</span>
+                <span>¢{Number(order.total_amount).toFixed(2)}</span>
               </div>
             </div>
           </div>

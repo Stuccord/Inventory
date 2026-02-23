@@ -69,10 +69,10 @@ export default function SalesView({ onUpdate }: SalesViewProps) {
                     <td className="px-4 py-3 text-sm font-medium text-gray-900">{sale.sale_number}</td>
                     <td className="px-4 py-3 text-sm text-gray-600">{new Date(sale.sale_date).toLocaleDateString()}</td>
                     <td className="px-4 py-3 text-sm text-gray-600">{sale.customer_name || 'Walk-in'}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">${Number(sale.subtotal).toFixed(2)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600">${Number(sale.discount).toFixed(2)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600">${Number(sale.tax).toFixed(2)}</td>
-                    <td className="px-4 py-3 text-sm font-medium text-green-600">${Number(sale.total_amount).toFixed(2)}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">¢{Number(sale.subtotal).toFixed(2)}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">¢{Number(sale.discount).toFixed(2)}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">¢{Number(sale.tax).toFixed(2)}</td>
+                    <td className="px-4 py-3 text-sm font-medium text-green-600">¢{Number(sale.total_amount).toFixed(2)}</td>
                     <td className="px-4 py-3 text-sm text-gray-600 capitalize">{sale.payment_method}</td>
                   </tr>
                 ))}
@@ -271,7 +271,7 @@ function SaleFormModal({ products, onClose, onSave, userId }: any) {
                 <option value="">Select a product</option>
                 {products.map((product: any) => (
                   <option key={product.id} value={product.id}>
-                    {product.name} - ${product.selling_price} (Stock: {product.current_stock})
+                    {product.name} - ¢{product.selling_price} (Stock: {product.current_stock})
                   </option>
                 ))}
               </select>
@@ -312,8 +312,8 @@ function SaleFormModal({ products, onClose, onSave, userId }: any) {
                     <tr key={item.product_id}>
                       <td className="px-3 py-2 text-sm">{item.product_name}</td>
                       <td className="px-3 py-2 text-sm">{item.quantity}</td>
-                      <td className="px-3 py-2 text-sm">${item.unit_price.toFixed(2)}</td>
-                      <td className="px-3 py-2 text-sm font-medium">${item.total_price.toFixed(2)}</td>
+                      <td className="px-3 py-2 text-sm">¢{item.unit_price.toFixed(2)}</td>
+                      <td className="px-3 py-2 text-sm font-medium">¢{item.total_price.toFixed(2)}</td>
                       <td className="px-3 py-2 text-sm">
                         <button
                           type="button"
@@ -371,19 +371,19 @@ function SaleFormModal({ products, onClose, onSave, userId }: any) {
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="flex justify-between text-sm mb-2">
               <span>Subtotal:</span>
-              <span className="font-medium">${subtotal.toFixed(2)}</span>
+              <span className="font-medium">¢{subtotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-sm mb-2">
               <span>Discount:</span>
-              <span className="font-medium text-red-600">-${formData.discount.toFixed(2)}</span>
+              <span className="font-medium text-red-600">-¢{formData.discount.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-sm mb-3">
               <span>Tax:</span>
-              <span className="font-medium">+${formData.tax.toFixed(2)}</span>
+              <span className="font-medium">+¢{formData.tax.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-xl font-bold pt-3 border-t">
               <span>Total:</span>
-              <span className="text-green-600">${total.toFixed(2)}</span>
+              <span className="text-green-600">¢{total.toFixed(2)}</span>
             </div>
           </div>
 

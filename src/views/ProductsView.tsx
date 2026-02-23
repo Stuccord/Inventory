@@ -247,7 +247,7 @@ export default function ProductsView({ onUpdate }: ProductsViewProps) {
                   </td>
                   <td className="px-6 py-4 text-gray-600">{product.categories?.name || '-'}</td>
                   <td className="px-6 py-4 font-medium text-gray-900">
-                    ${Number(product.selling_price).toFixed(2)}
+                    ¢{Number(product.selling_price).toFixed(2)}
                   </td>
                   <td className="px-6 py-4 text-right">
                     <span className={`inline-block px-3 py-1 text-sm font-semibold rounded-full ${getStockColor(product.current_stock)}`}>

@@ -371,7 +371,7 @@ export default function Dashboard() {
               />
               <StatCard
                 title="Revenue"
-                value={`$${stats.revenue.toFixed(0)}`}
+                value={`¢${stats.revenue.toFixed(0)}`}
                 bgColor="bg-purple-500"
               />
             </div>
