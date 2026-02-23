@@ -158,6 +158,20 @@ export default function Dashboard() {
               setMobileMenuOpen(false);
             }}
           />
+          {(isAdmin || isManager) && (
+            <button
+              onClick={() => setShowAlerts(!showAlerts)}
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-slate-300 hover:bg-slate-700 hover:text-white transition relative"
+            >
+              <Bell size={18} />
+              <span className="text-sm">Stock Alerts</span>
+              {stockAlerts.length > 0 && (
+                <span className="absolute right-4 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {stockAlerts.length}
+                </span>
+              )}
+            </button>
+          )}
           <NavItem
             icon={<Package size={18} />}
             label="Products"
