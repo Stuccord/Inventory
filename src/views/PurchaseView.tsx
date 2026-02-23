@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 export default function PurchaseView({ onUpdate }: any) {
   const [purchases, setPurchases] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     loadPurchases();
@@ -25,11 +26,27 @@ export default function PurchaseView({ onUpdate }: any) {
     <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Purchase Orders</h2>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+        <button
+          onClick={() => setShowForm(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
           <Plus size={20} />
           New Purchase Order
         </button>
       </div>
+
+      {showForm && (
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <p className="text-blue-800 mb-2">Purchase order creation form coming soon!</p>
+          <p className="text-sm text-blue-600 mb-4">This feature is under development. You can create purchase orders through the Stock Movement section for now.</p>
+          <button
+            onClick={() => setShowForm(false)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Close
+          </button>
+        </div>
+      )}
 
       {loading ? (
         <p className="text-center py-8 text-gray-600">Loading purchase orders...</p>

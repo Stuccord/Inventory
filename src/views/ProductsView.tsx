@@ -52,30 +52,46 @@ export default function ProductsView({ onUpdate }: ProductsViewProps) {
       return;
     }
 
-    const { data: skuData } = await supabase.rpc('generate_unique_sku', { prefix: 'PRD' });
-    const sku = skuData || `PRD-${Date.now()}`;
+    try {
+      const { data: skuData } = await supabase.rpc('generate_unique_sku', { prefix: 'PRD' });
+      const sku = skuData || `PRD-${Date.now()}`;
 
-    const { error } = await supabase.from('products').insert({
-      sku,
-      name: formData.name,
-      description: formData.description,
-      category_id: formData.category_id || null,
-      supplier_id: formData.supplier_id || null,
-      cost_price: parseFloat(formData.cost_price) || 0,
-      selling_price: parseFloat(formData.selling_price) || 0,
-      current_stock: parseInt(formData.current_stock) || 0,
-      reorder_level: parseInt(formData.reorder_level) || 5,
-      unit_of_measure: formData.unit_of_measure || 'pcs',
-      barcode: formData.barcode || '',
-      is_active: true,
-    });
+      const { error } = await supabase.from('products').insert({
+        sku,
+        name: formData.name,
+        description: formData.description,
+        category_id: formData.category_id || null,
+        supplier_id: formData.supplier_id || null,
+        cost_price: parseFloat(formData.cost_price) || 0,
+        selling_price: parseFloat(formData.selling_price) || 0,
+        current_stock: parseInt(formData.current_stock) || 0,
+        reorder_level: parseInt(formData.reorder_level) || 5,
+        unit_of_measure: formData.unit_of_measure || 'pcs',
+        barcode: formData.barcode || '',
+        is_active: true,
+      });
 
-    if (!error) {
+      if (error) {
+        console.error('Error adding product:', error);
+        alert('Error adding product: ' + error.message);
+        return;
+      }
+
+      await supabase.from('audit_logs').insert({
+        user_id: profile?.id,
+        action: 'create',
+        entity_type: 'product',
+        new_values: { name: formData.name, sku },
+      });
+
       setShowForm(false);
       resetForm();
-      loadData();
+      await loadData();
       onUpdate();
       alert('Product added successfully!');
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      alert('An unexpected error occurred. Please try again.');
     }
   };
 
