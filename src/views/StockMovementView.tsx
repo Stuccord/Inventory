@@ -21,7 +21,7 @@ export default function StockMovementView({ onUpdate }: { onUpdate: () => void }
       supabase.from('products').select('*, categories(*)').eq('is_active', true).order('name'),
       supabase
         .from('inventory_transactions')
-        .select('*, products(*), user_profiles(*)')
+        .select('*, products(*), user_profiles!inventory_transactions_created_by_fkey(full_name, email)')
         .order('created_at', { ascending: false })
         .limit(20),
     ]);
