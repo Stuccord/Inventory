@@ -282,7 +282,7 @@ export default function Dashboard() {
           )}
         </div>
 
-        {showAlerts && (isAdmin || isManager) && stockAlerts.length > 0 && (
+        {showAlerts && (isAdmin || isManager) && (
           <div className="bg-white border-b border-gray-200 shadow-lg">
             <div className="p-4 max-h-96 overflow-y-auto">
               <div className="flex items-center justify-between mb-3">
@@ -297,38 +297,42 @@ export default function Dashboard() {
                   <X size={20} />
                 </button>
               </div>
-              <div className="space-y-2">
-                {stockAlerts.map((alert) => (
-                  <div
-                    key={alert.id}
-                    className={`p-3 rounded-lg border ${
-                      alert.severity === 'critical'
-                        ? 'bg-red-50 border-red-200'
-                        : alert.severity === 'high'
-                        ? 'bg-orange-50 border-orange-200'
-                        : 'bg-yellow-50 border-yellow-200'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1">
-                        <p className="font-medium text-sm text-gray-900">
-                          {alert.products.name}
-                        </p>
-                        <p className="text-xs text-gray-600 mt-1">{alert.message}</p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {new Date(alert.created_at).toLocaleString()}
-                        </p>
+              {stockAlerts.length > 0 ? (
+                <div className="space-y-2">
+                  {stockAlerts.map((alert) => (
+                    <div
+                      key={alert.id}
+                      className={`p-3 rounded-lg border ${
+                        alert.severity === 'critical'
+                          ? 'bg-red-50 border-red-200'
+                          : alert.severity === 'high'
+                          ? 'bg-orange-50 border-orange-200'
+                          : 'bg-yellow-50 border-yellow-200'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1">
+                          <p className="font-medium text-sm text-gray-900">
+                            {alert.products.name}
+                          </p>
+                          <p className="text-xs text-gray-600 mt-1">{alert.message}</p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {new Date(alert.created_at).toLocaleString()}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => acknowledgeAlert(alert.id)}
+                          className="text-xs bg-gray-800 text-white px-3 py-1 rounded hover:bg-gray-700 whitespace-nowrap"
+                        >
+                          Dismiss
+                        </button>
                       </div>
-                      <button
-                        onClick={() => acknowledgeAlert(alert.id)}
-                        className="text-xs bg-gray-800 text-white px-3 py-1 rounded hover:bg-gray-700 whitespace-nowrap"
-                      >
-                        Dismiss
-                      </button>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-sm text-center py-4">No alerts at this time</p>
+              )}
             </div>
           </div>
         )}

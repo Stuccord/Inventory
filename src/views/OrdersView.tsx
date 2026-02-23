@@ -90,6 +90,11 @@ export default function OrdersView({ onUpdate }: { onUpdate: () => void }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!formData.customer_name.trim()) {
+      alert('Please enter customer name');
+      return;
+    }
+
     if (orderItems.length === 0) {
       alert('Please add at least one item');
       return;
@@ -119,7 +124,8 @@ export default function OrdersView({ onUpdate }: { onUpdate: () => void }) {
       .single();
 
     if (orderError || !order) {
-      alert('Error creating order');
+      console.error('Order creation error:', orderError);
+      alert(`Error creating order: ${orderError?.message || 'Unknown error'}`);
       return;
     }
 
@@ -296,13 +302,14 @@ export default function OrdersView({ onUpdate }: { onUpdate: () => void }) {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Customer Name
+                    Customer Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={formData.customer_name}
                     onChange={(e) => setFormData({ ...formData, customer_name: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                    required
                   />
                 </div>
                 <div>
