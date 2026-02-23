@@ -73,6 +73,60 @@ export default function Dashboard() {
 
     if (!error && data) {
       setStockAlerts(data as StockAlert[]);
+
+      // Send email notifications for unsent alerts
+      if ((isAdmin || isManager) && data.length > 0) {
+        sendEmailNotifications(data as StockAlert[]);
+      }
+    }
+  };
+
+  const sendEmailNotifications = async (alerts: StockAlert[]) => {
+    // Get admin/manager emails
+    const { data: users } = await supabase
+      .from('user_profiles')
+      .select('email')
+      .in('role', ['admin', 'manager']);
+
+    if (!users || users.length === 0) return;
+
+    const adminEmails = users.map(u => u.email).filter(e => e);
+
+    // Send notification for each unsent alert
+    for (const alert of alerts) {
+      const shouldSend = !(alert as any).notification_sent;
+
+      if (shouldSend) {
+        try {
+          const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-low-stock-alert`;
+
+          await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              product_name: alert.products.name,
+              current_stock: (alert as any).current_stock || 0,
+              reorder_level: (alert as any).reorder_level || 5,
+              severity: alert.severity,
+              admin_emails: adminEmails,
+            }),
+          });
+
+          // Mark as sent
+          await supabase
+            .from('stock_alerts')
+            .update({
+              notification_sent: true,
+              notification_sent_at: new Date().toISOString(),
+            })
+            .eq('id', alert.id);
+        } catch (error) {
+          console.error('Error sending notification:', error);
+        }
+      }
     }
   };
 

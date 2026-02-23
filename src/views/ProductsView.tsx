@@ -100,6 +100,34 @@ export default function ProductsView({ onUpdate }: ProductsViewProps) {
     return 'text-green-600 bg-green-50';
   };
 
+  const handleDelete = async (productId: string, productName: string) => {
+    if (!confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    const { error } = await supabase
+      .from('products')
+      .update({ is_active: false })
+      .eq('id', productId);
+
+    if (error) {
+      alert('Error deleting product: ' + error.message);
+      return;
+    }
+
+    await supabase.from('audit_logs').insert({
+      user_id: profile?.id,
+      action: 'delete',
+      entity_type: 'product',
+      entity_id: productId,
+      old_values: { name: productName },
+    });
+
+    loadData();
+    onUpdate();
+    alert('Product deleted successfully');
+  };
+
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -303,6 +331,9 @@ export default function ProductsView({ onUpdate }: ProductsViewProps) {
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Category</th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Price</th>
                 <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">Stock</th>
+                {canManage && (
+                  <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">Actions</th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -323,6 +354,17 @@ export default function ProductsView({ onUpdate }: ProductsViewProps) {
                       {product.current_stock}
                     </span>
                   </td>
+                  {canManage && (
+                    <td className="px-6 py-4 text-right">
+                      <button
+                        onClick={() => handleDelete(product.id, product.name)}
+                        className="text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1 rounded transition"
+                        title="Delete product"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
