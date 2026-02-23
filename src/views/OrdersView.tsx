@@ -200,15 +200,15 @@ export default function OrdersView({ onUpdate }: { onUpdate: () => void }) {
   const { subtotal, tax, total } = calculateTotals();
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Order Management</h1>
+    <div className="p-4 md:p-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
+        <h1 className="text-xl md:text-2xl font-bold text-gray-900">Order Management</h1>
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm md:text-base w-full sm:w-auto justify-center"
         >
           <Plus size={20} />
-          New Order
+          <span>New Order</span>
         </button>
       </div>
 
@@ -226,58 +226,60 @@ export default function OrdersView({ onUpdate }: { onUpdate: () => void }) {
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order #</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {filteredOrders.map((order) => (
-              <tr key={order.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {order.order_number}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                  {new Date(order.order_date).toLocaleDateString()}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-900">
-                  <div>{order.customer_name || 'Walk-in Customer'}</div>
-                  <div className="text-gray-500 text-xs">{order.customer_phone}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  ${Number(order.total_amount).toFixed(2)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                  <span className="capitalize">{order.payment_method}</span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 py-1 text-xs rounded-full ${
-                    order.order_status === 'completed' ? 'bg-green-100 text-green-800' :
-                    order.order_status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {order.order_status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  <button
-                    onClick={() => viewInvoice(order)}
-                    className="text-blue-600 hover:text-blue-800 mr-3"
-                  >
-                    <Eye size={18} />
-                  </button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order #</th>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Date</th>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Payment</th>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden lg:table-cell">Status</th>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {filteredOrders.map((order) => (
+                <tr key={order.id} className="hover:bg-gray-50">
+                  <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {order.order_number}
+                  </td>
+                  <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">
+                    {new Date(order.order_date).toLocaleDateString()}
+                  </td>
+                  <td className="px-3 md:px-6 py-4 text-sm text-gray-900">
+                    <div>{order.customer_name || 'Walk-in Customer'}</div>
+                    <div className="text-gray-500 text-xs hidden sm:block">{order.customer_phone}</div>
+                  </td>
+                  <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    ${Number(order.total_amount).toFixed(2)}
+                  </td>
+                  <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden md:table-cell">
+                    <span className="capitalize">{order.payment_method}</span>
+                  </td>
+                  <td className="px-3 md:px-6 py-4 whitespace-nowrap hidden lg:table-cell">
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      order.order_status === 'completed' ? 'bg-green-100 text-green-800' :
+                      order.order_status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {order.order_status}
+                    </span>
+                  </td>
+                  <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm">
+                    <button
+                      onClick={() => viewInvoice(order)}
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                      <Eye size={18} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {showForm && (
@@ -290,7 +292,7 @@ export default function OrdersView({ onUpdate }: { onUpdate: () => void }) {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -328,15 +330,15 @@ export default function OrdersView({ onUpdate }: { onUpdate: () => void }) {
               </div>
 
               <div>
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-lg font-semibold text-gray-900">Order Items</h3>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 gap-2">
+                  <h3 className="text-base md:text-lg font-semibold text-gray-900">Order Items</h3>
                   <button
                     type="button"
                     onClick={addOrderItem}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
+                    className="flex items-center gap-2 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm w-full sm:w-auto justify-center"
                   >
                     <Plus size={16} />
-                    Add Item
+                    <span>Add Item</span>
                   </button>
                 </div>
 
@@ -460,17 +462,17 @@ export default function OrdersView({ onUpdate }: { onUpdate: () => void }) {
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3">
+              <div className="flex flex-col sm:flex-row justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => { setShowForm(false); resetForm(); }}
-                  className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm md:text-base"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm md:text-base"
                 >
                   Create Order
                 </button>
@@ -522,13 +524,13 @@ function InvoiceModal({ order, onClose }: { order: Order; onClose: () => void })
           </div>
         </div>
 
-        <div className="p-8" id="invoice-content">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">INVOICE</h1>
-            <p className="text-gray-600">Inventory Management System</p>
+        <div className="p-4 md:p-8" id="invoice-content">
+          <div className="text-center mb-6 md:mb-8">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">INVOICE</h1>
+            <p className="text-sm md:text-base text-gray-600">Inventory Management System</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-6 md:mb-8">
             <div>
               <h3 className="font-bold text-gray-900 mb-2">Bill To:</h3>
               <p className="text-gray-700">{order.customer_name || 'Walk-in Customer'}</p>
@@ -542,26 +544,28 @@ function InvoiceModal({ order, onClose }: { order: Order; onClose: () => void })
             </div>
           </div>
 
-          <table className="w-full mb-8">
-            <thead className="bg-gray-50 border-b-2 border-gray-300">
-              <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Item</th>
-                <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">Qty</th>
-                <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">Price</th>
-                <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">Total</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {orderItems.map((item) => (
-                <tr key={item.id}>
-                  <td className="px-4 py-3 text-sm text-gray-900">{item.products?.name}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600 text-center">{item.quantity}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600 text-right">${Number(item.unit_price).toFixed(2)}</td>
-                  <td className="px-4 py-3 text-sm font-medium text-gray-900 text-right">${Number(item.total_price).toFixed(2)}</td>
+          <div className="overflow-x-auto mb-6 md:mb-8">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b-2 border-gray-300">
+                <tr>
+                  <th className="px-2 md:px-4 py-3 text-left text-xs md:text-sm font-semibold text-gray-700">Item</th>
+                  <th className="px-2 md:px-4 py-3 text-center text-xs md:text-sm font-semibold text-gray-700">Qty</th>
+                  <th className="px-2 md:px-4 py-3 text-right text-xs md:text-sm font-semibold text-gray-700">Price</th>
+                  <th className="px-2 md:px-4 py-3 text-right text-xs md:text-sm font-semibold text-gray-700">Total</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {orderItems.map((item) => (
+                  <tr key={item.id}>
+                    <td className="px-2 md:px-4 py-3 text-xs md:text-sm text-gray-900">{item.products?.name}</td>
+                    <td className="px-2 md:px-4 py-3 text-xs md:text-sm text-gray-600 text-center">{item.quantity}</td>
+                    <td className="px-2 md:px-4 py-3 text-xs md:text-sm text-gray-600 text-right">${Number(item.unit_price).toFixed(2)}</td>
+                    <td className="px-2 md:px-4 py-3 text-xs md:text-sm font-medium text-gray-900 text-right">${Number(item.total_price).toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           <div className="flex justify-end mb-8">
             <div className="w-64">

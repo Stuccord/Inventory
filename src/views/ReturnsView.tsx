@@ -204,16 +204,16 @@ export default function ReturnsView({ onUpdate }: { onUpdate: () => void }) {
   );
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Order Returns</h1>
+    <div className="p-4 md:p-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
+        <h1 className="text-xl md:text-2xl font-bold text-gray-900">Order Returns</h1>
         {(isAdmin || isManager) && (
           <button
             onClick={() => setShowForm(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm md:text-base w-full sm:w-auto justify-center"
           >
             <Plus size={20} />
-            Process Return
+            <span>Process Return</span>
           </button>
         )}
       </div>
@@ -232,70 +232,72 @@ export default function ReturnsView({ onUpdate }: { onUpdate: () => void }) {
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Return #</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reason</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Refund</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {filteredReturns.map((ret) => (
-              <tr key={ret.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {ret.return_number}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                  {new Date(ret.return_date).toLocaleDateString()}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 capitalize">
-                  {ret.return_type}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-600">
-                  {ret.return_reason}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  ${Number(ret.refund_amount).toFixed(2)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 py-1 text-xs rounded-full ${
-                    ret.status === 'completed' ? 'bg-green-100 text-green-800' :
-                    ret.status === 'approved' ? 'bg-blue-100 text-blue-800' :
-                    ret.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    {ret.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  {ret.status === 'pending' && (isAdmin || isManager) && (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => approveReturn(ret.id)}
-                        className="text-green-600 hover:text-green-800"
-                        title="Approve"
-                      >
-                        <Check size={18} />
-                      </button>
-                      <button
-                        onClick={() => rejectReturn(ret.id)}
-                        className="text-red-600 hover:text-red-800"
-                        title="Reject"
-                      >
-                        <X size={18} />
-                      </button>
-                    </div>
-                  )}
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Return #</th>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Date</th>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Type</th>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden lg:table-cell">Reason</th>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Refund</th>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {filteredReturns.map((ret) => (
+                <tr key={ret.id} className="hover:bg-gray-50">
+                  <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {ret.return_number}
+                  </td>
+                  <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">
+                    {new Date(ret.return_date).toLocaleDateString()}
+                  </td>
+                  <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600 capitalize hidden md:table-cell">
+                    {ret.return_type}
+                  </td>
+                  <td className="px-3 md:px-6 py-4 text-sm text-gray-600 hidden lg:table-cell">
+                    {ret.return_reason}
+                  </td>
+                  <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    ${Number(ret.refund_amount).toFixed(2)}
+                  </td>
+                  <td className="px-3 md:px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      ret.status === 'completed' ? 'bg-green-100 text-green-800' :
+                      ret.status === 'approved' ? 'bg-blue-100 text-blue-800' :
+                      ret.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      {ret.status}
+                    </span>
+                  </td>
+                  <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm">
+                    {ret.status === 'pending' && (isAdmin || isManager) && (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => approveReturn(ret.id)}
+                          className="text-green-600 hover:text-green-800"
+                          title="Approve"
+                        >
+                          <Check size={18} />
+                        </button>
+                        <button
+                          onClick={() => rejectReturn(ret.id)}
+                          className="text-red-600 hover:text-red-800"
+                          title="Reject"
+                        >
+                          <X size={18} />
+                        </button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {showForm && (
@@ -308,7 +310,7 @@ export default function ReturnsView({ onUpdate }: { onUpdate: () => void }) {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -362,7 +364,7 @@ export default function ReturnsView({ onUpdate }: { onUpdate: () => void }) {
 
               {selectedOrderItems.length > 0 && (
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Return Items</h3>
+                  <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-3">Return Items</h3>
                   <div className="space-y-3">
                     {returnItems.map((item, index) => {
                       const orderItem = selectedOrderItems[index];
@@ -455,17 +457,17 @@ export default function ReturnsView({ onUpdate }: { onUpdate: () => void }) {
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3">
+              <div className="flex flex-col sm:flex-row justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => { setShowForm(false); resetForm(); }}
-                  className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm md:text-base"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm md:text-base"
                 >
                   Process Return
                 </button>

@@ -146,15 +146,15 @@ export default function UsersView() {
   );
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
+    <div className="p-4 md:p-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
+        <h1 className="text-xl md:text-2xl font-bold text-gray-900">User Management</h1>
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm md:text-base w-full sm:w-auto justify-center"
         >
           <Plus size={20} />
-          Add User
+          <span>Add User</span>
         </button>
       </div>
 
@@ -172,70 +172,73 @@ export default function UsersView() {
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {filteredUsers.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{user.full_name}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                  {user.email}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                  {user.phone || '-'}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 py-1 text-xs rounded-full uppercase font-medium ${
-                    user.role === 'admin' ? 'bg-red-100 text-red-800' :
-                    user.role === 'manager' ? 'bg-blue-100 text-blue-800' :
-                    user.role === 'auditor' ? 'bg-orange-100 text-orange-800' :
-                    'bg-green-100 text-green-800'
-                  }`}>
-                    {user.role}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 py-1 text-xs rounded-full ${
-                    user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    {user.is_active ? 'Active' : 'Inactive'}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => editUser(user)}
-                      className="text-blue-600 hover:text-blue-800"
-                      title="Edit"
-                    >
-                      <Edit2 size={18} />
-                    </button>
-                    {user.id !== currentUser?.id && (
-                      <button
-                        onClick={() => toggleUserStatus(user)}
-                        className={`${user.is_active ? 'text-red-600 hover:text-red-800' : 'text-green-600 hover:text-green-800'}`}
-                        title={user.is_active ? 'Deactivate' : 'Activate'}
-                      >
-                        {user.is_active ? <Trash2 size={18} /> : <Plus size={18} />}
-                      </button>
-                    )}
-                  </div>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Email</th>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden lg:table-cell">Phone</th>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Status</th>
+                <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {filteredUsers.map((user) => (
+                <tr key={user.id} className="hover:bg-gray-50">
+                  <td className="px-3 md:px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">{user.full_name}</div>
+                    <div className="text-xs text-gray-500 sm:hidden">{user.email}</div>
+                  </td>
+                  <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">
+                    {user.email}
+                  </td>
+                  <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden lg:table-cell">
+                    {user.phone || '-'}
+                  </td>
+                  <td className="px-3 md:px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 py-1 text-xs rounded-full uppercase font-medium ${
+                      user.role === 'admin' ? 'bg-red-100 text-red-800' :
+                      user.role === 'manager' ? 'bg-blue-100 text-blue-800' :
+                      user.role === 'auditor' ? 'bg-orange-100 text-orange-800' :
+                      'bg-green-100 text-green-800'
+                    }`}>
+                      {user.role}
+                    </span>
+                  </td>
+                  <td className="px-3 md:px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    }`}>
+                      {user.is_active ? 'Active' : 'Inactive'}
+                    </span>
+                  </td>
+                  <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => editUser(user)}
+                        className="text-blue-600 hover:text-blue-800"
+                        title="Edit"
+                      >
+                        <Edit2 size={18} />
+                      </button>
+                      {user.id !== currentUser?.id && (
+                        <button
+                          onClick={() => toggleUserStatus(user)}
+                          className={`${user.is_active ? 'text-red-600 hover:text-red-800' : 'text-green-600 hover:text-green-800'}`}
+                          title={user.is_active ? 'Deactivate' : 'Activate'}
+                        >
+                          {user.is_active ? <Trash2 size={18} /> : <Plus size={18} />}
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {showForm && (
@@ -250,7 +253,7 @@ export default function UsersView() {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Full Name *
@@ -339,17 +342,17 @@ export default function UsersView() {
                 </p>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4">
+              <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4">
                 <button
                   type="button"
                   onClick={() => { setShowForm(false); setEditingUser(null); resetForm(); }}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm md:text-base"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm md:text-base"
                 >
                   {editingUser ? 'Update User' : 'Create User'}
                 </button>

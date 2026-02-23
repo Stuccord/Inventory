@@ -67,38 +67,38 @@ export default function StockMovementView({ onUpdate }: { onUpdate: () => void }
   };
 
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Stock Movement</h1>
-        <p className="text-gray-600">Quick stock in/out recording</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Stock Movement</h1>
+        <p className="text-sm md:text-base text-gray-600">Quick stock in/out recording</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Record Movement</h2>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
+          <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-4">Record Movement</h2>
 
-          <div className="flex gap-2 mb-6">
+          <div className="flex flex-col sm:flex-row gap-2 mb-6">
             <button
               onClick={() => setType('in')}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition ${
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition text-sm md:text-base ${
                 type === 'in'
                   ? 'bg-green-600 text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
               <ArrowDownCircle size={20} />
-              Stock In
+              <span>Stock In</span>
             </button>
             <button
               onClick={() => setType('out')}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition ${
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition text-sm md:text-base ${
                 type === 'out'
                   ? 'bg-red-600 text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
               <ArrowUpCircle size={20} />
-              Stock Out
+              <span>Stock Out</span>
             </button>
           </div>
 
@@ -146,7 +146,7 @@ export default function StockMovementView({ onUpdate }: { onUpdate: () => void }
 
             <button
               type="submit"
-              className={`w-full px-4 py-3 text-white rounded-lg font-medium transition ${
+              className={`w-full px-4 py-3 text-white rounded-lg font-medium transition text-sm md:text-base ${
                 type === 'in'
                   ? 'bg-green-600 hover:bg-green-700'
                   : 'bg-red-600 hover:bg-red-700'
@@ -158,9 +158,9 @@ export default function StockMovementView({ onUpdate }: { onUpdate: () => void }
         </div>
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="p-6 border-b border-gray-200 flex items-center gap-2">
+          <div className="p-4 md:p-6 border-b border-gray-200 flex items-center gap-2">
             <History size={20} className="text-gray-600" />
-            <h2 className="text-xl font-bold text-gray-900">Recent Movements</h2>
+            <h2 className="text-lg md:text-xl font-bold text-gray-900">Recent Movements</h2>
           </div>
 
           <div className="divide-y divide-gray-100 max-h-[600px] overflow-y-auto">

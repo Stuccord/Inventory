@@ -12,6 +12,7 @@ export default function StockTallyView({ onUpdate }: { onUpdate: () => void }) {
   const [selectedTally, setSelectedTally] = useState<StockTally | null>(null);
   const [tallyItems, setTallyItems] = useState<StockTallyItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [productSearchTerm, setProductSearchTerm] = useState('');
   const [formData, setFormData] = useState({
     location: 'main',
     notes: '',
@@ -189,10 +190,16 @@ export default function StockTallyView({ onUpdate }: { onUpdate: () => void }) {
     tally.tally_number.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const filteredProducts = products.filter(product =>
+    product.name.toLowerCase().includes(productSearchTerm.toLowerCase()) ||
+    product.sku.toLowerCase().includes(productSearchTerm.toLowerCase()) ||
+    product.categories?.name.toLowerCase().includes(productSearchTerm.toLowerCase())
+  );
+
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Stock Tally / Physical Count</h1>
+    <div className="p-4 md:p-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <h1 className="text-xl md:text-2xl font-bold text-gray-900">Stock Tally / Physical Count</h1>
         {(isAdmin || isManager) && (
           <button
             onClick={() => setShowForm(true)}
@@ -217,36 +224,36 @@ export default function StockTallyView({ onUpdate }: { onUpdate: () => void }) {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-lg shadow overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tally #</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Variance</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+              <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tally #</th>
+              <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+              <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Location</th>
+              <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Variance</th>
+              <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+              <th className="px-3 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {filteredTallies.map((tally) => (
               <tr key={tally.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <td className="px-3 md:px-6 py-4 text-sm font-medium text-gray-900">
                   {tally.tally_number}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                   {new Date(tally.tally_date).toLocaleDateString()}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 capitalize">
+                <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600 capitalize hidden sm:table-cell">
                   {tally.location}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm">
                   <span className={`font-medium ${tally.total_variance > 0 ? 'text-orange-600' : 'text-green-600'}`}>
                     {tally.total_variance > 0 ? `±${tally.total_variance}` : '0'}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-3 md:px-6 py-4 whitespace-nowrap">
                   <span className={`px-2 py-1 text-xs rounded-full ${
                     tally.status === 'approved' ? 'bg-green-100 text-green-800' :
                     tally.status === 'completed' ? 'bg-blue-100 text-blue-800' :
@@ -256,11 +263,11 @@ export default function StockTallyView({ onUpdate }: { onUpdate: () => void }) {
                     {tally.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm">
                   <div className="flex gap-2">
                     <button
                       onClick={() => viewDetails(tally)}
-                      className="text-blue-600 hover:text-blue-800"
+                      className="text-blue-600 hover:text-blue-800 text-xs md:text-sm"
                       title="View Details"
                     >
                       View
@@ -329,10 +336,22 @@ export default function StockTallyView({ onUpdate }: { onUpdate: () => void }) {
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Product Count</h3>
-                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-lg font-semibold text-gray-900">Product Count</h3>
+                  <div className="relative w-64">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+                    <input
+                      type="text"
+                      placeholder="Search products..."
+                      value={productSearchTerm}
+                      onChange={(e) => setProductSearchTerm(e.target.value)}
+                      className="w-full pl-9 pr-4 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+                <div className="border border-gray-200 rounded-lg overflow-x-auto max-h-96">
                   <table className="w-full">
-                    <thead className="bg-gray-50 border-b">
+                    <thead className="bg-gray-50 border-b sticky top-0">
                       <tr>
                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">SKU</th>
                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Product Name</th>
@@ -343,7 +362,7 @@ export default function StockTallyView({ onUpdate }: { onUpdate: () => void }) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {products.map((product) => {
+                      {filteredProducts.map((product) => {
                         const counted = countedProducts.get(product.id) ?? product.current_stock;
                         const variance = counted - product.current_stock;
                         return (
