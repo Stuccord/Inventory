@@ -18,10 +18,14 @@ export default function ProductsView({ onUpdate }: ProductsViewProps) {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
+    cost_price: '',
     selling_price: '',
     current_stock: '',
+    reorder_level: '5',
     category_id: '',
     supplier_id: '',
+    barcode: '',
+    unit_of_measure: 'pcs',
   });
 
   useEffect(() => {
@@ -43,8 +47,13 @@ export default function ProductsView({ onUpdate }: ProductsViewProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const timestamp = new Date().getTime().toString().slice(-8);
-    const sku = 'PRD-' + timestamp;
+    if (!formData.name || !formData.selling_price) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    const { data: skuData } = await supabase.rpc('generate_unique_sku', { prefix: 'PRD' });
+    const sku = skuData || `PRD-${Date.now()}`;
 
     const { error } = await supabase.from('products').insert({
       sku,
@@ -52,12 +61,12 @@ export default function ProductsView({ onUpdate }: ProductsViewProps) {
       description: formData.description,
       category_id: formData.category_id || null,
       supplier_id: formData.supplier_id || null,
-      cost_price: 0,
+      cost_price: parseFloat(formData.cost_price) || 0,
       selling_price: parseFloat(formData.selling_price) || 0,
       current_stock: parseInt(formData.current_stock) || 0,
-      reorder_level: 5,
-      unit_of_measure: 'pcs',
-      barcode: '',
+      reorder_level: parseInt(formData.reorder_level) || 5,
+      unit_of_measure: formData.unit_of_measure || 'pcs',
+      barcode: formData.barcode || '',
       is_active: true,
     });
 
@@ -74,10 +83,14 @@ export default function ProductsView({ onUpdate }: ProductsViewProps) {
     setFormData({
       name: '',
       description: '',
+      cost_price: '',
       selling_price: '',
       current_stock: '',
+      reorder_level: '5',
       category_id: '',
       supplier_id: '',
+      barcode: '',
+      unit_of_measure: 'pcs',
     });
   };
 
@@ -126,7 +139,20 @@ export default function ProductsView({ onUpdate }: ProductsViewProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Price *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Cost Price *</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    required
+                    value={formData.cost_price}
+                    onChange={(e) => setFormData({ ...formData, cost_price: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="0.00"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Selling Price *</label>
                   <input
                     type="number"
                     step="0.01"
@@ -137,9 +163,11 @@ export default function ProductsView({ onUpdate }: ProductsViewProps) {
                     placeholder="0.00"
                   />
                 </div>
+              </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Stock *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Current Stock *</label>
                   <input
                     type="number"
                     required
@@ -148,6 +176,34 @@ export default function ProductsView({ onUpdate }: ProductsViewProps) {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="0"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Reorder Level *</label>
+                  <input
+                    type="number"
+                    required
+                    value={formData.reorder_level}
+                    onChange={(e) => setFormData({ ...formData, reorder_level: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="5"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Unit of Measure</label>
+                  <select
+                    value={formData.unit_of_measure}
+                    onChange={(e) => setFormData({ ...formData, unit_of_measure: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="pcs">Pieces</option>
+                    <option value="kg">Kilograms</option>
+                    <option value="lbs">Pounds</option>
+                    <option value="liters">Liters</option>
+                    <option value="box">Box</option>
+                    <option value="pack">Pack</option>
+                  </select>
                 </div>
               </div>
 
@@ -181,15 +237,28 @@ export default function ProductsView({ onUpdate }: ProductsViewProps) {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  rows={2}
-                  placeholder="Optional description"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    rows={2}
+                    placeholder="Optional description"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Barcode/SKU</label>
+                  <input
+                    type="text"
+                    value={formData.barcode}
+                    onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Optional barcode"
+                  />
+                </div>
               </div>
 
               <div className="flex gap-3">

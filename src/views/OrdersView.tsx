@@ -11,6 +11,7 @@ export default function OrdersView({ onUpdate }: { onUpdate: () => void }) {
   const [showInvoice, setShowInvoice] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [taxRate, setTaxRate] = useState(0.10);
   const [formData, setFormData] = useState({
     customer_name: '',
     customer_phone: '',
@@ -27,7 +28,15 @@ export default function OrdersView({ onUpdate }: { onUpdate: () => void }) {
   useEffect(() => {
     loadOrders();
     loadProducts();
+    loadTaxRate();
   }, []);
+
+  const loadTaxRate = async () => {
+    const { data } = await supabase.rpc('get_setting', { key: 'tax_rate' });
+    if (data) {
+      setTaxRate(parseFloat(data) || 0.10);
+    }
+  };
 
   const loadOrders = async () => {
     const { data } = await supabase
@@ -82,7 +91,7 @@ export default function OrdersView({ onUpdate }: { onUpdate: () => void }) {
     const subtotal = orderItems.reduce((sum, item) =>
       sum + (item.unit_price * item.quantity), 0
     );
-    const tax = subtotal * 0.1;
+    const tax = subtotal * taxRate;
     const total = subtotal + tax;
     return { subtotal, tax, total };
   };
@@ -129,39 +138,22 @@ export default function OrdersView({ onUpdate }: { onUpdate: () => void }) {
       return;
     }
 
-    for (const item of orderItems) {
-      const product = products.find(p => p.id === item.product_id);
-      if (!product) continue;
+    const orderItemsData = orderItems.map(item => ({
+      order_id: order.id,
+      product_id: item.product_id,
+      quantity: item.quantity,
+      unit_price: item.unit_price,
+      total_price: item.unit_price * item.quantity,
+    }));
 
-      if (product.current_stock < item.quantity) {
-        alert(`Insufficient stock for ${product.name}`);
-        continue;
-      }
+    const { error: itemsError } = await supabase
+      .from('order_items')
+      .insert(orderItemsData);
 
-      await supabase.from('order_items').insert({
-        order_id: order.id,
-        product_id: item.product_id,
-        quantity: item.quantity,
-        unit_price: item.unit_price,
-        total_price: item.unit_price * item.quantity,
-      });
-
-      await supabase
-        .from('products')
-        .update({ current_stock: product.current_stock - item.quantity })
-        .eq('id', item.product_id);
-
-      await supabase.from('inventory_transactions').insert({
-        product_id: item.product_id,
-        transaction_type: 'sale',
-        quantity: -item.quantity,
-        previous_stock: product.current_stock,
-        new_stock: product.current_stock - item.quantity,
-        reference_type: 'order',
-        reference_id: order.id,
-        notes: `Order ${order.order_number}`,
-        created_by: profile?.id,
-      });
+    if (itemsError) {
+      console.error('Order items error:', itemsError);
+      alert(`Error adding items: ${itemsError.message}`);
+      return;
     }
 
     await supabase.from('audit_logs').insert({
@@ -429,7 +421,7 @@ export default function OrdersView({ onUpdate }: { onUpdate: () => void }) {
                       <span className="font-medium">¢{subtotal.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-600">Tax (10%):</span>
+                      <span className="text-gray-600">Tax ({(taxRate * 100).toFixed(0)}%):</span>
                       <span className="font-medium">¢{tax.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-lg font-bold border-t pt-2">

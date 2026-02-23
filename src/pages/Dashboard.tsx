@@ -65,16 +65,14 @@ export default function Dashboard() {
   }, []);
 
   const loadStockAlerts = async () => {
-    if (isAdmin || isManager) {
-      const { data, error } = await supabase
-        .from('stock_alerts')
-        .select('*, products(name)')
-        .is('acknowledged_at', null)
-        .order('created_at', { ascending: false });
+    const { data, error } = await supabase
+      .from('stock_alerts')
+      .select('*, products(name)')
+      .is('acknowledged_at', null)
+      .order('created_at', { ascending: false });
 
-      if (!error && data) {
-        setStockAlerts(data as StockAlert[]);
-      }
+    if (!error && data) {
+      setStockAlerts(data as StockAlert[]);
     }
   };
 
@@ -158,20 +156,18 @@ export default function Dashboard() {
               setMobileMenuOpen(false);
             }}
           />
-          {(isAdmin || isManager) && (
-            <button
-              onClick={() => setShowAlerts(!showAlerts)}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-slate-300 hover:bg-slate-700 hover:text-white transition relative"
-            >
-              <Bell size={18} />
-              <span className="text-sm">Stock Alerts</span>
-              {stockAlerts.length > 0 && (
-                <span className="absolute right-4 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {stockAlerts.length}
-                </span>
-              )}
-            </button>
-          )}
+          <button
+            onClick={() => setShowAlerts(!showAlerts)}
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-slate-300 hover:bg-slate-700 hover:text-white transition relative"
+          >
+            <Bell size={18} />
+            <span className="text-sm">Stock Alerts</span>
+            {stockAlerts.length > 0 && (
+              <span className="absolute right-4 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {stockAlerts.length}
+              </span>
+            )}
+          </button>
           <NavItem
             icon={<Package size={18} />}
             label="Products"
@@ -281,22 +277,20 @@ export default function Dashboard() {
             <Menu size={24} />
           </button>
           <h1 className="font-bold text-lg text-gray-900">Inventory MS</h1>
-          {(isAdmin || isManager) && (
-            <button
-              onClick={() => setShowAlerts(!showAlerts)}
-              className="relative text-gray-700 hover:text-gray-900"
-            >
-              <Bell size={24} />
-              {stockAlerts.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {stockAlerts.length}
-                </span>
-              )}
-            </button>
-          )}
+          <button
+            onClick={() => setShowAlerts(!showAlerts)}
+            className="relative text-gray-700 hover:text-gray-900"
+          >
+            <Bell size={24} />
+            {stockAlerts.length > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {stockAlerts.length}
+              </span>
+            )}
+          </button>
         </div>
 
-        {showAlerts && (isAdmin || isManager) && (
+        {showAlerts && (
           <div className="bg-white border-b border-gray-200 shadow-lg">
             <div className="p-4 max-h-96 overflow-y-auto">
               <div className="flex items-center justify-between mb-3">
@@ -334,12 +328,14 @@ export default function Dashboard() {
                             {new Date(alert.created_at).toLocaleString()}
                           </p>
                         </div>
-                        <button
-                          onClick={() => acknowledgeAlert(alert.id)}
-                          className="text-xs bg-gray-800 text-white px-3 py-1 rounded hover:bg-gray-700 whitespace-nowrap"
-                        >
-                          Dismiss
-                        </button>
+                        {(isAdmin || isManager) && (
+                          <button
+                            onClick={() => acknowledgeAlert(alert.id)}
+                            className="text-xs bg-gray-800 text-white px-3 py-1 rounded hover:bg-gray-700 whitespace-nowrap"
+                          >
+                            Dismiss
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -355,20 +351,18 @@ export default function Dashboard() {
           <div className="p-4 md:p-6">
             <div className="flex items-center justify-between mb-6">
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Dashboard</h1>
-              {(isAdmin || isManager) && (
-                <button
-                  onClick={() => setShowAlerts(!showAlerts)}
-                  className="hidden lg:flex relative text-gray-700 hover:text-gray-900 items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow"
-                >
-                  <Bell size={20} />
-                  <span className="text-sm font-medium">Alerts</span>
-                  {stockAlerts.length > 0 && (
-                    <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {stockAlerts.length}
-                    </span>
-                  )}
-                </button>
-              )}
+              <button
+                onClick={() => setShowAlerts(!showAlerts)}
+                className="hidden lg:flex relative text-gray-700 hover:text-gray-900 items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow"
+              >
+                <Bell size={20} />
+                <span className="text-sm font-medium">Alerts</span>
+                {stockAlerts.length > 0 && (
+                  <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {stockAlerts.length}
+                  </span>
+                )}
+              </button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">

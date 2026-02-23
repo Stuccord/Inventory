@@ -195,25 +195,6 @@ function SaleFormModal({ products, onClose, onSave, userId }: any) {
       const { error: itemsError } = await supabase.from('sale_items').insert(saleItemsData);
       if (itemsError) throw itemsError;
 
-      for (const item of saleItems) {
-        const product = products.find((p: any) => p.id === item.product_id);
-        const newStock = product.current_stock - item.quantity;
-
-        await supabase.from('products').update({ current_stock: newStock }).eq('id', item.product_id);
-
-        await supabase.from('inventory_transactions').insert([{
-          product_id: item.product_id,
-          transaction_type: 'sale',
-          quantity: -item.quantity,
-          previous_stock: product.current_stock,
-          new_stock: newStock,
-          reference_type: 'sale',
-          reference_id: saleData.id,
-          notes: `Sale ${saleNumber}`,
-          created_by: userId,
-        }]);
-      }
-
       onSave();
     } catch (err: any) {
       setError(err.message);

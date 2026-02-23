@@ -49,13 +49,16 @@ export default function UsersView() {
         return;
       }
 
+      const { password, ...safeFormData } = formData;
+      const { password: _oldPassword, ...safeOldData } = editingUser as any;
+
       await supabase.from('audit_logs').insert({
         user_id: currentUser?.id,
         action: 'update',
         entity_type: 'user_profile',
         entity_id: editingUser.id,
-        old_values: editingUser,
-        new_values: formData,
+        old_values: safeOldData,
+        new_values: safeFormData,
       });
     } else {
       const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -83,12 +86,14 @@ export default function UsersView() {
         return;
       }
 
+      const { password, ...safeNewData } = formData;
+
       await supabase.from('audit_logs').insert({
         user_id: currentUser?.id,
         action: 'create',
         entity_type: 'user_profile',
         entity_id: authData.user.id,
-        new_values: formData,
+        new_values: safeNewData,
       });
     }
 

@@ -158,7 +158,10 @@ export default function ReturnsView({ onUpdate }: { onUpdate: () => void }) {
       })
       .eq('id', returnId);
 
-    await supabase.rpc('process_return', { return_id_param: returnId });
+    await supabase.rpc('process_return', {
+      return_id_param: returnId,
+      processor_id_param: profile?.id
+    });
 
     await supabase.from('audit_logs').insert({
       user_id: profile?.id,
