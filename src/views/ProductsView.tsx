@@ -34,7 +34,7 @@ export default function ProductsView({ onUpdate }: ProductsViewProps) {
 
   const loadData = async () => {
     const [productsRes, categoriesRes, suppliersRes] = await Promise.all([
-      supabase.from('products').select('*, categories(*), suppliers(*)').eq('is_active', true).order('name'),
+      supabase.from('products').select('*, categories(id, name, description), suppliers(id, name, email, phone, contact_person)').eq('is_active', true).order('name'),
       supabase.from('categories').select('*').order('name'),
       supabase.from('suppliers').select('*').eq('is_active', true).order('name'),
     ]);
