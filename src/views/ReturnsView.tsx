@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, Check, X, AlertCircle } from 'lucide-react';
+import { Plus, Search, Check, X, AlertCircle, Trash2 } from 'lucide-react';
 import { supabase, Return, Order, ReturnItem } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
 
@@ -190,6 +190,44 @@ export default function ReturnsView({ onUpdate }: { onUpdate: () => void }) {
     loadReturns();
   };
 
+  const handleDeleteReturn = async (returnId: string, returnNumber: string) => {
+    if (!confirm(`Are you sure you want to delete return ${returnNumber}? This action cannot be undone.`)) {
+      return;
+    }
+
+    const { error: itemsError } = await supabase
+      .from('return_items')
+      .delete()
+      .eq('return_id', returnId);
+
+    if (itemsError) {
+      alert('Error deleting return items: ' + itemsError.message);
+      return;
+    }
+
+    const { error: returnError } = await supabase
+      .from('returns')
+      .delete()
+      .eq('id', returnId);
+
+    if (returnError) {
+      alert('Error deleting return: ' + returnError.message);
+      return;
+    }
+
+    await supabase.from('audit_logs').insert({
+      user_id: profile?.id,
+      action: 'delete',
+      entity_type: 'return',
+      entity_id: returnId,
+      old_values: { return_number: returnNumber },
+    });
+
+    loadReturns();
+    onUpdate();
+    alert('Return deleted successfully');
+  };
+
   const resetForm = () => {
     setFormData({
       order_id: '',
@@ -282,24 +320,35 @@ export default function ReturnsView({ onUpdate }: { onUpdate: () => void }) {
                     </span>
                   </td>
                   <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm">
-                    {ret.status === 'pending' && (isAdmin || isManager) && (
-                      <div className="flex gap-2">
+                    <div className="flex gap-2">
+                      {ret.status === 'pending' && (isAdmin || isManager) && (
+                        <>
+                          <button
+                            onClick={() => approveReturn(ret.id)}
+                            className="text-green-600 hover:text-green-800"
+                            title="Approve"
+                          >
+                            <Check size={18} />
+                          </button>
+                          <button
+                            onClick={() => rejectReturn(ret.id)}
+                            className="text-red-600 hover:text-red-800"
+                            title="Reject"
+                          >
+                            <X size={18} />
+                          </button>
+                        </>
+                      )}
+                      {(isAdmin || isManager) && (
                         <button
-                          onClick={() => approveReturn(ret.id)}
-                          className="text-green-600 hover:text-green-800"
-                          title="Approve"
+                          onClick={() => handleDeleteReturn(ret.id, ret.return_number)}
+                          className="text-gray-600 hover:text-red-800"
+                          title="Delete Return"
                         >
-                          <Check size={18} />
+                          <Trash2 size={18} />
                         </button>
-                        <button
-                          onClick={() => rejectReturn(ret.id)}
-                          className="text-red-600 hover:text-red-800"
-                          title="Reject"
-                        >
-                          <X size={18} />
-                        </button>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

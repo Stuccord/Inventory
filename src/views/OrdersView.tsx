@@ -5,6 +5,7 @@ import { useAuth } from '../lib/auth';
 
 export default function OrdersView({ onUpdate }: { onUpdate: () => void }) {
   const { profile } = useAuth();
+  const canManage = profile?.role === 'admin' || profile?.role === 'manager';
   const [orders, setOrders] = useState<Order[]>([]);
   const [products, setProducts] = useState<ProductWithDetails[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -190,6 +191,44 @@ export default function OrdersView({ onUpdate }: { onUpdate: () => void }) {
     window.print();
   };
 
+  const handleDeleteOrder = async (orderId: string, orderNumber: string) => {
+    if (!confirm(`Are you sure you want to delete order ${orderNumber}? This action cannot be undone.`)) {
+      return;
+    }
+
+    const { error: itemsError } = await supabase
+      .from('order_items')
+      .delete()
+      .eq('order_id', orderId);
+
+    if (itemsError) {
+      alert('Error deleting order items: ' + itemsError.message);
+      return;
+    }
+
+    const { error: orderError } = await supabase
+      .from('orders')
+      .delete()
+      .eq('id', orderId);
+
+    if (orderError) {
+      alert('Error deleting order: ' + orderError.message);
+      return;
+    }
+
+    await supabase.from('audit_logs').insert({
+      user_id: profile?.id,
+      action: 'delete',
+      entity_type: 'order',
+      entity_id: orderId,
+      old_values: { order_number: orderNumber },
+    });
+
+    loadOrders();
+    onUpdate();
+    alert('Order deleted successfully');
+  };
+
   const filteredOrders = orders.filter(order =>
     order.order_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
     order.customer_name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -266,12 +305,24 @@ export default function OrdersView({ onUpdate }: { onUpdate: () => void }) {
                     </span>
                   </td>
                   <td className="px-3 md:px-6 py-4 whitespace-nowrap text-sm">
-                    <button
-                      onClick={() => viewInvoice(order)}
-                      className="text-blue-600 hover:text-blue-800"
-                    >
-                      <Eye size={18} />
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => viewInvoice(order)}
+                        className="text-blue-600 hover:text-blue-800"
+                        title="View Invoice"
+                      >
+                        <Eye size={18} />
+                      </button>
+                      {canManage && (
+                        <button
+                          onClick={() => handleDeleteOrder(order.id, order.order_number)}
+                          className="text-red-600 hover:text-red-800"
+                          title="Delete Order"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

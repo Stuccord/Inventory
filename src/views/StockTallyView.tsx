@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, Check, X, Download, Upload, AlertTriangle } from 'lucide-react';
+import { Plus, Search, Check, X, Download, Upload, AlertTriangle, Trash2 } from 'lucide-react';
 import { supabase, StockTally, StockTallyItem, ProductWithDetails } from '../lib/supabase';
 import { useAuth } from '../lib/auth';
 
@@ -153,6 +153,44 @@ export default function StockTallyView({ onUpdate }: { onUpdate: () => void }) {
     setShowDetail(true);
   };
 
+  const handleDeleteTally = async (tallyId: string, tallyNumber: string) => {
+    if (!confirm(`Are you sure you want to delete tally ${tallyNumber}? This action cannot be undone.`)) {
+      return;
+    }
+
+    const { error: itemsError } = await supabase
+      .from('stock_tally_items')
+      .delete()
+      .eq('tally_id', tallyId);
+
+    if (itemsError) {
+      alert('Error deleting tally items: ' + itemsError.message);
+      return;
+    }
+
+    const { error: tallyError } = await supabase
+      .from('stock_tally')
+      .delete()
+      .eq('id', tallyId);
+
+    if (tallyError) {
+      alert('Error deleting tally: ' + tallyError.message);
+      return;
+    }
+
+    await supabase.from('audit_logs').insert({
+      user_id: profile?.id,
+      action: 'delete',
+      entity_type: 'stock_tally',
+      entity_id: tallyId,
+      old_values: { tally_number: tallyNumber },
+    });
+
+    loadTallies();
+    onUpdate();
+    alert('Stock tally deleted successfully');
+  };
+
   const resetForm = () => {
     setFormData({
       location: 'main',
@@ -279,6 +317,15 @@ export default function StockTallyView({ onUpdate }: { onUpdate: () => void }) {
                         title="Approve & Apply"
                       >
                         <Check size={18} />
+                      </button>
+                    )}
+                    {(isAdmin || isManager) && (
+                      <button
+                        onClick={() => handleDeleteTally(tally.id, tally.tally_number)}
+                        className="text-gray-600 hover:text-red-800"
+                        title="Delete Tally"
+                      >
+                        <Trash2 size={18} />
                       </button>
                     )}
                   </div>
