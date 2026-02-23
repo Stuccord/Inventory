@@ -68,7 +68,7 @@ export default function Dashboard() {
     const { data, error } = await supabase
       .from('stock_alerts')
       .select('*, products(name)')
-      .is('acknowledged_at', null)
+      .eq('is_acknowledged', false)
       .order('created_at', { ascending: false });
 
     if (!error && data) {
@@ -134,6 +134,7 @@ export default function Dashboard() {
     const { error } = await supabase
       .from('stock_alerts')
       .update({
+        is_acknowledged: true,
         acknowledged_at: new Date().toISOString(),
         acknowledged_by: profile?.id
       })
